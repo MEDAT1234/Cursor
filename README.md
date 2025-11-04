@@ -5,6 +5,8 @@ This repository contains musical notation for "Lamen Neshki Hali" by Saad Lamjar
 ## Files
 
 - `lamen_neshki_hali.abc` - Musical notation in ABC format
+- `lamen_neshki_hali_guitar.txt` - 🎸 Guitar tablature in ASCII format
+- `GUITAR_PRO_GUIDE_AR.md` - 📖 Complete Guitar Pro 5 guide in Arabic
 - `README_AR.md` - Detailed documentation in Arabic
 
 ## Song Information
@@ -17,10 +19,20 @@ This repository contains musical notation for "Lamen Neshki Hali" by Saad Lamjar
 
 ## How to Use
 
+### For ABC Notation
 You can view and play the ABC notation file using:
 - **EasyABC** - Free software for Windows/Mac/Linux
 - **abcjs** - JavaScript library for web browsers
 - **MuseScore** - Can import ABC files
+
+### For Guitar Tablature 🎸
+1. Open `lamen_neshki_hali_guitar.txt` in any text editor
+2. Import into Guitar Pro 5 (see `GUITAR_PRO_GUIDE_AR.md` for detailed instructions in Arabic)
+3. The file includes:
+   - All chord diagrams (Dm, C, Bb, A7, Gm, F)
+   - Intro, verses, chorus, and fast section
+   - Strumming patterns
+   - Playing tips
 
 ## Important Note
 
