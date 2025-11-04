@@ -1,0 +1,15 @@
+{
+    "config": {
+        "chrome_path": "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+        "chromedriver_path": "C:/Users/hp/Desktop/discord bot/chromedriver.exe",
+        "remote_port": "9222",
+        "delay_min": 60,
+        "delay_max": 100,
+        "channel_mode": 1,
+        "notifications": true
+    },
+    "channels": [
+        "https://discord.com/channels/1202457552479195176/1301798486014165012",
+        "https://discord.com/channels/1329499702314762245/1329499600075495444"
+    ]
+}
