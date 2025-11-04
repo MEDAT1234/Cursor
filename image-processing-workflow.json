@@ -1,0 +1,296 @@
+{
+  "name": "Image Processing Workflow",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "upload-image",
+        "options": {
+          "rawBody": false
+        },
+        "responseMode": "responseNode"
+      },
+      "id": "webhook-trigger",
+      "name": "Webhook - Upload Image",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [250, 300],
+      "webhookId": "image-upload"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Extract image from webhook data\nconst items = $input.all();\nconst processedItems = [];\n\nfor (const item of items) {\n  let imageData, imageName, imageMimeType;\n  \n  // Check if image is in binary data\n  if (item.binary && item.binary.data) {\n    imageData = item.binary.data.data;\n    imageName = item.binary.data.fileName || 'uploaded-image.jpg';\n    imageMimeType = item.binary.data.mimeType || 'image/jpeg';\n  }\n  // Check if image is in body as base64\n  else if (item.json.image) {\n    imageData = item.json.image;\n    imageName = item.json.filename || 'uploaded-image.jpg';\n    imageMimeType = item.json.mimeType || 'image/jpeg';\n  }\n  // Check for file upload in body.data\n  else if (item.json.data && item.json.data.files && item.json.data.files.length > 0) {\n    const file = item.json.data.files[0];\n    imageData = file.data;\n    imageName = file.filename || file.name || 'uploaded-image.jpg';\n    imageMimeType = file.mimetype || file.mimeType || 'image/jpeg';\n  }\n  \n  processedItems.push({\n    json: {\n      fileName: imageName,\n      mimeType: imageMimeType,\n      uploadedAt: new Date().toISOString(),\n      fileSize: imageData ? Buffer.from(imageData, 'base64').length : 0\n    },\n    binary: {\n      image: {\n        data: imageData,\n        mimeType: imageMimeType,\n        fileName: imageName\n      }\n    }\n  });\n}\n\nreturn processedItems;"
+      },
+      "id": "extract-image",
+      "name": "Extract Image Data",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [450, 300]
+    },
+    {
+      "parameters": {
+        "operation": "analyze",
+        "options": {
+          "maxTokens": 500,
+          "prompt": "Analyze this image in detail. Describe:\n1. Main subjects and objects\n2. Colors and composition\n3. Setting/environment\n4. Any text visible\n5. Overall mood or purpose\n6. Suggested use cases or categories"
+        }
+      },
+      "id": "ai-vision-analysis",
+      "name": "AI Vision Analysis",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [650, 200],
+      "credentials": {
+        "openAiApi": {
+          "id": "1",
+          "name": "OpenAI API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "extractText",
+        "options": {
+          "language": "eng"
+        }
+      },
+      "id": "ocr-text-extraction",
+      "name": "OCR - Extract Text",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [650, 300]
+    },
+    {
+      "parameters": {
+        "operation": "resize",
+        "newWidth": 800,
+        "newHeight": 600,
+        "resizeOption": "maximumArea",
+        "options": {
+          "format": "jpg",
+          "quality": 85
+        }
+      },
+      "id": "resize-image",
+      "name": "Resize Image",
+      "type": "n8n-nodes-base.editImage",
+      "typeVersion": 1,
+      "position": [650, 400]
+    },
+    {
+      "parameters": {
+        "operation": "metadata",
+        "options": {}
+      },
+      "id": "extract-metadata",
+      "name": "Extract Metadata",
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1,
+      "position": [650, 500]
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineAll",
+        "options": {}
+      },
+      "id": "merge-results",
+      "name": "Merge All Results",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2.1,
+      "position": [850, 300]
+    },
+    {
+      "parameters": {
+        "jsCode": "// Combine all analysis results\nconst items = $input.all();\nconst result = {\n  originalImage: {},\n  aiAnalysis: {},\n  ocrText: '',\n  resizedImage: {},\n  metadata: {},\n  processedAt: new Date().toISOString()\n};\n\nfor (const item of items) {\n  if (item.json.fileName) {\n    result.originalImage = {\n      fileName: item.json.fileName,\n      mimeType: item.json.mimeType,\n      fileSize: item.json.fileSize,\n      uploadedAt: item.json.uploadedAt\n    };\n  }\n  \n  if (item.json.choices && item.json.choices[0]) {\n    result.aiAnalysis = {\n      description: item.json.choices[0].message.content,\n      model: item.json.model\n    };\n  }\n  \n  if (item.json.text) {\n    result.ocrText = item.json.text;\n  }\n  \n  if (item.json.width && item.json.height) {\n    result.metadata = item.json;\n  }\n}\n\nreturn [{\n  json: result,\n  binary: items[0].binary\n}];"
+      },
+      "id": "format-output",
+      "name": "Format Final Output",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1050, 300]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ $json }}",
+        "options": {
+          "responseHeaders": {
+            "entries": [
+              {
+                "name": "Content-Type",
+                "value": "application/json"
+              }
+            ]
+          }
+        }
+      },
+      "id": "webhook-response",
+      "name": "Send Response",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1,
+      "position": [1250, 300]
+    },
+    {
+      "parameters": {
+        "operation": "write",
+        "fileName": "={{ $json.originalImage.fileName }}",
+        "options": {
+          "append": false
+        }
+      },
+      "id": "save-to-disk",
+      "name": "Save Original to Disk",
+      "type": "n8n-nodes-base.writeBinaryFile",
+      "typeVersion": 1,
+      "position": [1050, 450],
+      "disabled": true
+    },
+    {
+      "parameters": {
+        "operation": "upload",
+        "bucket": "={{ $env.S3_BUCKET }}",
+        "fileName": "={{ $json.originalImage.fileName }}",
+        "options": {
+          "acl": "public-read"
+        }
+      },
+      "id": "upload-to-s3",
+      "name": "Upload to S3 (Optional)",
+      "type": "n8n-nodes-base.aws-s3",
+      "typeVersion": 1,
+      "position": [1050, 550],
+      "disabled": true,
+      "credentials": {
+        "aws": {
+          "id": "2",
+          "name": "AWS Credentials"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Webhook - Upload Image": {
+      "main": [
+        [
+          {
+            "node": "Extract Image Data",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract Image Data": {
+      "main": [
+        [
+          {
+            "node": "AI Vision Analysis",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "OCR - Extract Text",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Resize Image",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Extract Metadata",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Vision Analysis": {
+      "main": [
+        [
+          {
+            "node": "Merge All Results",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OCR - Extract Text": {
+      "main": [
+        [
+          {
+            "node": "Merge All Results",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Resize Image": {
+      "main": [
+        [
+          {
+            "node": "Merge All Results",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Extract Metadata": {
+      "main": [
+        [
+          {
+            "node": "Merge All Results",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "Merge All Results": {
+      "main": [
+        [
+          {
+            "node": "Format Final Output",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Format Final Output": {
+      "main": [
+        [
+          {
+            "node": "Send Response",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Save Original to Disk",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Upload to S3 (Optional)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "staticData": null,
+  "tags": [],
+  "triggerCount": 1,
+  "updatedAt": "2025-11-04T00:00:00.000Z",
+  "versionId": "1"
+}
