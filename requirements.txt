@@ -1,0 +1,22 @@
+# مكتبات أساسية
+python-dotenv==1.0.0
+requests==2.31.0
+
+# معالجة الفيديوهات
+moviepy==1.0.3
+Pillow==10.1.0
+opencv-python==4.8.1.78
+numpy==1.24.3
+
+# تحميل من تيكتوك
+yt-dlp==2023.11.16
+TikTokApi==6.2.0
+
+# رفع على تيكتوك (استخدام المتصفح الآلي)
+playwright==1.40.0
+selenium==4.15.2
+webdriver-manager==4.0.1
+
+# أدوات مساعدة
+tqdm==4.66.1
+colorama==0.4.6
