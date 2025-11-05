@@ -1,0 +1,72 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# Virtual Environment
+venv/
+ENV/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Environment variables
+.env
+
+# Video files and working directories
+downloads/
+processed/
+uploaded/
+*.mp4
+*.avi
+*.mov
+*.mkv
+*.webm
+*.flv
+
+# Temporary files
+temp-audio.m4a
+*.tmp
+temp*.mp4
+
+# Metadata
+metadata.json
+
+# Logs
+*.log
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Playwright
+.playwright/
+
+# Selenium
+geckodriver.log
+chromedriver.log
