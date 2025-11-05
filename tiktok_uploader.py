@@ -11,36 +11,53 @@ from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeo
 
 
 class TikTokUploader:
-    def __init__(self, session_id=None):
+    def __init__(self, session_id=None, language='en'):
         """
         Initialize TikTok uploader
         
         Args:
             session_id: TikTok session cookie (optional, will use manual login if not provided)
+            language: 'en' for English or 'ar' for Arabic captions
         """
         self.session_id = session_id
         self.browser = None
         self.context = None
         self.page = None
+        self.language = language
         
-        # Hashtags for ASMR content
-        self.base_hashtags = [
+        # Hashtags for ASMR content (English)
+        self.base_hashtags_en = [
             "#asmr", "#asmrsounds", "#asmrvideo", "#relaxing",
             "#sleep", "#satisfying", "#calming", "#meditation",
             "#sleepaid", "#anxiety", "#stress", "#peaceful"
         ]
         
-        self.specific_hashtags = {
+        # Hashtags for ASMR content (Arabic)
+        self.base_hashtags_ar = [
+            "#asmr", "#اسمر", "#استرخاء", "#نوم",
+            "#هدوء", "#تأمل", "#راحة", "#سكينة",
+            "#مريح", "#صوت_مريح", "#للنوم", "#مهدئ"
+        ]
+        
+        self.specific_hashtags_en = {
             'rain': ["#rain", "#rainsounds", "#rainyday", "#rainasmr"],
             'fire': ["#fireplace", "#fire", "#cozy", "#fireasmr"],
             'waves': ["#ocean", "#waves", "#beach", "#oceanwaves"],
             'typing': ["#typing", "#keyboard", "#typingasmr", "#work"],
             'whisper': ["#whisper", "#softspoken", "#whisperasmr", "#tingles"]
         }
+        
+        self.specific_hashtags_ar = {
+            'rain': ["#مطر", "#صوت_المطر", "#اصوات_المطر", "#مطر_مريح"],
+            'fire': ["#نار", "#مدفأة", "#دفء", "#نار_مريحة"],
+            'waves': ["#امواج", "#بحر", "#شاطئ", "#امواج_البحر"],
+            'typing': ["#كتابة", "#لوحة_مفاتيح", "#صوت_كتابة", "#تركيز"],
+            'whisper': ["#همس", "#صوت_ناعم", "#همس_مريح", "#اصوات_هادئة"]
+        }
     
     def _get_captions(self, video_type):
         """Generate caption with hashtags for the video"""
-        captions = {
+        captions_en = {
             'rain': [
                 "Relaxing rain sounds for sleep and study 🌧️💤",
                 "Let the rain wash away your stress 🌧️✨",
@@ -73,11 +90,54 @@ class TikTokUploader:
             ]
         }
         
+        captions_ar = {
+            'rain': [
+                "أصوات مطر مريحة للنوم والدراسة 🌧️💤",
+                "دع المطر يغسل توترك 🌧️✨",
+                "أصوات مطر مثالية للنوم العميق 🌧️😴",
+                "أجواء مطر هادئة للاسترخاء 🌧️🎧"
+            ],
+            'fire': [
+                "أصوات مدفأة دافئة للاسترخاء 🔥💤",
+                "نار دافئة وهادئة 🔥✨",
+                "أجواء مدفأة مثالية للنوم 🔥😴",
+                "أصوات طقطقة النار لتخفيف التوتر 🔥🎧"
+            ],
+            'waves': [
+                "أمواج محيط هادئة للنوم السلمي 🌊💤",
+                "أصوات شاطئ مريحة للتأمل 🌊✨",
+                "أجواء أمواج المحيط الهادئة 🌊😴",
+                "أمواج مهدئة للاسترخاء العميق 🌊🎧"
+            ],
+            'typing': [
+                "أصوات كتابة لوحة المفاتيح المُرضية ⌨️💤",
+                "ASMR كتابة مريح للتركيز ⌨️✨",
+                "أصوات لوحة مفاتيح هادئة للدراسة ⌨️😴",
+                "أجواء كتابة مهدئة ⌨️🎧"
+            ],
+            'whisper': [
+                "همس ناعم ASMR للنوم 💜💤",
+                "همسات لطيفة للاسترخاء 💜✨",
+                "أصوات همس هادئة 💜😴",
+                "همس مهدئ ASMR 💜🎧"
+            ]
+        }
+        
+        # Select captions based on language
+        if self.language == 'ar':
+            captions = captions_ar
+            base_hashtags = self.base_hashtags_ar
+            specific_hashtags = self.specific_hashtags_ar
+        else:
+            captions = captions_en
+            base_hashtags = self.base_hashtags_en
+            specific_hashtags = self.specific_hashtags_en
+        
         caption = random.choice(captions.get(video_type, captions['waves']))
         
         # Add hashtags
-        specific_tags = self.specific_hashtags.get(video_type, [])
-        all_tags = self.base_hashtags + specific_tags
+        specific_tags = specific_hashtags.get(video_type, [])
+        all_tags = base_hashtags + specific_tags
         random.shuffle(all_tags)
         
         # TikTok allows up to 2200 characters

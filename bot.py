@@ -51,6 +51,9 @@ class ASMRBot:
         post_times_str = os.getenv('POST_TIMES', '09:00,14:00,20:00')
         self.post_times = [t.strip() for t in post_times_str.split(',')]
         
+        # Language setting (en or ar)
+        self.language = os.getenv('LANGUAGE', 'en')
+        
         # Initialize components
         self.video_generator = VideoGenerator(
             width=self.video_width,
@@ -59,7 +62,7 @@ class ASMRBot:
             fps=self.fps
         )
         
-        self.uploader = TikTokUploader(session_id=self.session_id)
+        self.uploader = TikTokUploader(session_id=self.session_id, language=self.language)
         
         # Statistics
         self.stats = {
@@ -73,6 +76,7 @@ class ASMRBot:
         logger.info(f"📊 Config: {self.video_width}x{self.video_height}, {self.video_duration}s, {self.fps}fps")
         logger.info(f"🎵 ASMR Types: {', '.join(self.asmr_types)}")
         logger.info(f"⏰ Post Times: {', '.join(self.post_times)}")
+        logger.info(f"🌐 Language: {self.language}")
     
     def generate_and_post(self):
         """Generate a video and post it to TikTok"""
