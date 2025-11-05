@@ -1,0 +1,156 @@
+╔══════════════════════════════════════════════════════════════════╗
+║                                                                  ║
+║          🎵 ASMR TIKTOK BOT - HOW TO RUN 🎵                     ║
+║                                                                  ║
+╚══════════════════════════════════════════════════════════════════╝
+
+📖 READ THIS FIRST: START_HERE.md
+
+Quick Steps:
+============
+
+1️⃣  SETUP (First Time Only - 2 minutes)
+   
+   Linux/macOS:
+   -----------
+   cd /workspace
+   chmod +x setup.sh
+   ./setup.sh
+
+   Windows:
+   --------
+   cd \workspace
+   setup.bat
+
+
+2️⃣  ACTIVATE ENVIRONMENT (Every Time)
+
+   Linux/macOS:
+   -----------
+   source venv/bin/activate
+
+   Windows:
+   --------
+   venv\Scripts\activate.bat
+
+
+3️⃣  TEST (No Upload - 1 minute)
+
+   Linux/macOS:
+   -----------
+   python3 bot.py --mode test
+
+   Windows:
+   --------
+   python bot.py --mode test
+
+   → Creates test video in generated_videos/ folder
+
+
+4️⃣  POST FIRST VIDEO (With TikTok Login - 2 minutes)
+
+   Linux/macOS:
+   -----------
+   python3 bot.py --mode once
+
+   Windows:
+   --------
+   python bot.py --mode once
+
+   → Browser opens automatically
+   → Login to TikTok
+   → Press Enter in terminal
+   → Bot posts video
+   → Save the session ID shown!
+
+
+5️⃣  RUN AUTOMATED (Posts at 9am, 2pm, 8pm daily)
+
+   Linux/macOS:
+   -----------
+   ./start_bot.sh
+
+   Windows:
+   --------
+   start_bot.bat
+
+   → Bot now runs 24/7!
+   → Press Ctrl+C to stop
+
+
+6️⃣  MONITOR
+
+   View logs:
+   ----------
+   tail -f bot.log           (Linux/macOS)
+   
+   Check videos:
+   ------------
+   ls generated_videos/      (Linux/macOS)
+   dir generated_videos      (Windows)
+
+
+═══════════════════════════════════════════════════════════════════
+
+📚 DOCUMENTATION FILES:
+
+   ⭐ START_HERE.md          → Read this first! Complete guide
+   📋 STEP_BY_STEP.md        → Detailed instructions
+   ⚡ COMMANDS_CHEATSHEET.md → Quick command reference
+   🚀 QUICKSTART.md          → 5-minute setup
+   📖 README.md              → Full documentation
+   📊 OVERVIEW.md            → Technical details
+
+═══════════════════════════════════════════════════════════════════
+
+🎯 MOST IMPORTANT COMMANDS:
+
+   ./setup.sh                           Setup (once)
+   source venv/bin/activate             Activate env
+   python3 bot.py --mode test           Test video
+   python3 bot.py --mode once           Post once
+   ./start_bot.sh                       Run automated
+   tail -f bot.log                      View logs
+
+═══════════════════════════════════════════════════════════════════
+
+⚙️  CONFIGURATION:
+
+   Edit .env file to customize:
+   - Posting times: POST_TIMES=09:00,14:00,20:00
+   - ASMR types: ASMR_TYPES=rain,fire,waves,typing,whisper
+   - Video duration: VIDEO_DURATION=15
+
+═══════════════════════════════════════════════════════════════════
+
+❓ NEED HELP?
+
+   1. Open START_HERE.md
+   2. Check bot.log for errors
+   3. Read STEP_BY_STEP.md
+   4. Review troubleshooting in README.md
+
+═══════════════════════════════════════════════════════════════════
+
+✅ SUCCESS CHECKLIST:
+
+   □ Ran setup script
+   □ Generated test video
+   □ Logged into TikTok
+   □ Posted first video
+   □ Saved session ID to .env
+   □ Bot running on schedule
+   
+═══════════════════════════════════════════════════════════════════
+
+🎉 THAT'S IT! YOUR BOT WILL NOW:
+
+   ✅ Generate professional ASMR videos
+   ✅ Post automatically to TikTok
+   ✅ Run 24/7 without intervention
+   ✅ Log all activity
+
+═══════════════════════════════════════════════════════════════════
+
+                    Happy Automating! 🎵✨
+
